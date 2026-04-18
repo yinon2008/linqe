@@ -18,6 +18,30 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 let nextId = 0;
 
+const ICONS: Record<ToastType, JSX.Element> = {
+  success: (
+    <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  ),
+  error: (
+    <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  ),
+  info: (
+    <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+};
+
+const STYLES: Record<ToastType, string> = {
+  success: "bg-[#0a1f0a] border border-green-500/25 text-green-300",
+  error:   "bg-[#1f0a0a] border border-red-500/25 text-red-300",
+  info:    "bg-[#0d0d0d] border border-[#2a2a2a] text-white",
+};
+
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -26,25 +50,37 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => [...prev, { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4000);
+    }, 4500);
   }, []);
+
+  function dismiss(id: number) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
 
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 pointer-events-none">
         {toasts.map((t) => (
           <div
             key={t.id}
             className={`
-              pointer-events-auto px-4 py-3 rounded-xl text-sm font-medium shadow-xl
-              transition-all duration-300 animate-slideUp
-              ${t.type === "success" ? "bg-green-500 text-white" : ""}
-              ${t.type === "error" ? "bg-red-500 text-white" : ""}
-              ${t.type === "info" ? "bg-[#111] border border-[#333] text-white" : ""}
+              pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+              shadow-2xl max-w-xs animate-slideInRight
+              ${STYLES[t.type]}
             `}
           >
-            {t.message}
+            {ICONS[t.type]}
+            <span className="flex-1 leading-snug">{t.message}</span>
+            <button
+              onClick={() => dismiss(t.id)}
+              className="opacity-40 hover:opacity-80 transition-opacity ml-1 flex-shrink-0"
+              aria-label="Dismiss"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         ))}
       </div>

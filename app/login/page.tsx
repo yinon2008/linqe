@@ -7,11 +7,12 @@ import { createClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/Button";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
+  const [shaking, setShaking]   = useState(false);
+  const router  = useRouter();
   const supabase = createClient();
 
   async function handleLogin(e: React.FormEvent) {
@@ -24,6 +25,8 @@ export default function LoginPage() {
     if (error) {
       setError(error.message);
       setLoading(false);
+      setShaking(true);
+      setTimeout(() => setShaking(false), 450);
     } else {
       router.push("/dashboard");
     }
@@ -38,52 +41,70 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-sm space-y-6">
+      <div className="w-full max-w-sm space-y-6 animate-scaleIn">
+        {/* Logo */}
         <div className="text-center">
-          <Link href="/" className="text-white font-bold text-2xl">
-            Linqe<span className="text-[#555]">*</span>
+          <Link href="/" className="text-white font-bold text-2xl inline-block hover:opacity-80 transition-opacity">
+            Linqe<span className="text-[#333]">✦</span>
           </Link>
           <h1 className="text-xl font-semibold text-white mt-4">Welcome back</h1>
-          <p className="text-[#666] text-sm mt-1">Sign in to your account</p>
+          <p className="text-[#555] text-sm mt-1">Sign in to your account</p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-3">
+        {/* Form */}
+        <form
+          onSubmit={handleLogin}
+          className={`space-y-3 ${shaking ? "animate-shake" : ""}`}
+        >
           <input
             type="email"
             placeholder="Email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setError(""); }}
             required
-            className="w-full px-4 py-3 bg-[#0d0d0d] border border-[#222] rounded-xl text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#444] transition-colors"
+            className={`w-full px-4 py-3 bg-[#0d0d0d] border rounded-xl text-white placeholder-[#444] text-sm focus:outline-none transition-colors ${
+              error ? "border-red-500/40 focus:border-red-500/60" : "border-[#222] focus:border-[#444]"
+            }`}
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => { setPassword(e.target.value); setError(""); }}
             required
-            className="w-full px-4 py-3 bg-[#0d0d0d] border border-[#222] rounded-xl text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#444] transition-colors"
+            className={`w-full px-4 py-3 bg-[#0d0d0d] border rounded-xl text-white placeholder-[#444] text-sm focus:outline-none transition-colors ${
+              error ? "border-red-500/40 focus:border-red-500/60" : "border-[#222] focus:border-[#444]"
+            }`}
           />
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && (
+            <div className="flex items-center gap-2 text-red-400 text-xs animate-slideDown px-1">
+              <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          )}
 
           <Button type="submit" loading={loading} className="w-full">
             Sign in
           </Button>
         </form>
 
+        {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#1a1a1a]" />
+            <div className="w-full border-t border-[#111]" />
           </div>
-          <div className="relative flex justify-center text-xs text-[#444]">
+          <div className="relative flex justify-center text-xs text-[#333]">
             <span className="bg-black px-3">or</span>
           </div>
         </div>
 
+        {/* Google */}
         <button
           onClick={handleGoogle}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#0d0d0d] border border-[#222] rounded-xl text-white text-sm hover:border-[#444] transition-colors"
+          className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-[#0d0d0d] border border-[#1e1e1e] rounded-xl text-white text-sm hover:border-[#333] active:scale-[0.99] transition-all"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -94,9 +115,9 @@ export default function LoginPage() {
           Continue with Google
         </button>
 
-        <p className="text-center text-sm text-[#555]">
+        <p className="text-center text-sm text-[#444]">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-white hover:underline">
+          <Link href="/signup" className="text-white hover:underline underline-offset-2">
             Sign up
           </Link>
         </p>
