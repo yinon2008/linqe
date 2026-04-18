@@ -1,114 +1,312 @@
 "use client";
 
-import type { JSX } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
 
-const EXAMPLES: {
+type Category = "All" | "Web App" | "Marketing" | "Mobile" | "Automation" | "E-commerce";
+
+interface Template {
   title: string;
   description: string;
   prompt: string;
-  icon: JSX.Element;
-}[] = [
+  category: Category;
+  tags: string[];
+  complexity: "Starter" | "Medium" | "Advanced";
+  est_days: number;
+  color: string;
+  icon: string;
+}
+
+const TEMPLATES: Template[] = [
   {
-    title: "Web App",
-    description: "Full-stack SaaS application with auth, billing, and core features.",
+    title: "SaaS Starter",
+    description: "Full-stack SaaS with auth, billing, dashboard, and team management.",
     prompt: "Build a project management SaaS app with user authentication, team collaboration, task boards, time tracking, and Stripe billing integration.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.038 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.038-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-      </svg>
-    ),
+    category: "Web App",
+    tags: ["Next.js", "Supabase", "Stripe"],
+    complexity: "Advanced",
+    est_days: 21,
+    color: "#38BDF8",
+    icon: "⚡",
   },
   {
     title: "Landing Page",
-    description: "High-converting landing page with hero, features, pricing, and CTA.",
-    prompt: "Create a stunning landing page for an AI productivity tool with animated hero section, social proof, feature highlights, pricing tiers, and email capture.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8.25V18a2.25 2.25 0 002.25 2.25h13.5A2.25 2.25 0 0021 18V8.25m-18 0V6a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 6v2.25m-18 0h18M5.25 6h.008v.008H5.25V6zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 0h.008v.008H9.75V6zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm4.125 0h.008v.008H14.25V6zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-      </svg>
-    ),
+    description: "High-converting landing page with hero, features, pricing, and email capture.",
+    prompt: "Create a stunning landing page for an AI productivity tool with animated hero section, social proof, feature highlights, pricing tiers, and email capture form.",
+    category: "Marketing",
+    tags: ["Next.js", "Tailwind", "Resend"],
+    complexity: "Starter",
+    est_days: 5,
+    color: "#A78BFA",
+    icon: "🚀",
   },
   {
-    title: "Mobile App",
-    description: "Cross-platform mobile application with modern UX.",
+    title: "Fitness App",
+    description: "Cross-platform mobile app with workout tracking and nutrition logging.",
     prompt: "Build a React Native fitness tracking app with workout logging, progress charts, nutrition tracking, social challenges, and push notifications.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18h3" />
-      </svg>
-    ),
+    category: "Mobile",
+    tags: ["React Native", "Expo", "Supabase"],
+    complexity: "Advanced",
+    est_days: 28,
+    color: "#34D399",
+    icon: "💪",
   },
   {
-    title: "Lead System",
-    description: "Complete lead generation and nurturing pipeline.",
+    title: "Lead Machine",
+    description: "Complete lead gen pipeline with CRM, drip campaigns, and analytics.",
     prompt: "Build a lead generation system with landing page, email capture forms, automated drip campaigns, CRM integration, lead scoring, and analytics dashboard.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-      </svg>
-    ),
+    category: "Marketing",
+    tags: ["Next.js", "Resend", "Airtable"],
+    complexity: "Medium",
+    est_days: 14,
+    color: "#FB923C",
+    icon: "🎯",
   },
   {
-    title: "E-commerce",
-    description: "Full-featured online store with payments and inventory.",
+    title: "E-commerce Store",
+    description: "Full online store with product catalog, cart, and Stripe checkout.",
     prompt: "Create a full e-commerce store with product catalog, shopping cart, Stripe checkout, order management, inventory tracking, and customer accounts.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-      </svg>
-    ),
+    category: "E-commerce",
+    tags: ["Next.js", "Stripe", "Supabase"],
+    complexity: "Advanced",
+    est_days: 21,
+    color: "#F472B6",
+    icon: "🛍️",
   },
   {
     title: "Automation Pipeline",
-    description: "Workflow automation connecting your tools and services.",
+    description: "Workflow automation connecting your tools — Gmail, Notion, Slack.",
     prompt: "Build an automation pipeline that monitors Gmail, processes incoming requests with AI, creates tasks in Notion, sends Slack notifications, and logs everything to a Google Sheet.",
-    icon: (
-      <svg className="w-5 h-5 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-      </svg>
-    ),
+    category: "Automation",
+    tags: ["n8n", "OpenAI", "Zapier"],
+    complexity: "Medium",
+    est_days: 10,
+    color: "#FBBF24",
+    icon: "⚙️",
+  },
+  {
+    title: "AI Chatbot",
+    description: "Customer support bot with knowledge base and handoff to human.",
+    prompt: "Build an AI customer support chatbot with custom knowledge base, multi-turn conversations, sentiment analysis, automatic escalation to human agents, and analytics dashboard.",
+    category: "Web App",
+    tags: ["Next.js", "Claude API", "Supabase"],
+    complexity: "Medium",
+    est_days: 12,
+    color: "#38BDF8",
+    icon: "🤖",
+  },
+  {
+    title: "Newsletter Platform",
+    description: "Build and grow an email newsletter with subscriber management.",
+    prompt: "Create a newsletter platform with subscriber management, email template builder, scheduling system, open rate analytics, and paid subscription tiers via Stripe.",
+    category: "Marketing",
+    tags: ["Next.js", "Resend", "Stripe"],
+    complexity: "Medium",
+    est_days: 14,
+    color: "#A78BFA",
+    icon: "📧",
+  },
+  {
+    title: "Booking System",
+    description: "Appointment scheduling with calendar sync and payment collection.",
+    prompt: "Build an appointment booking system with real-time availability, calendar sync, automated reminders via SMS and email, Stripe payment collection, and admin dashboard.",
+    category: "Web App",
+    tags: ["Next.js", "Cal.com", "Stripe"],
+    complexity: "Medium",
+    est_days: 16,
+    color: "#34D399",
+    icon: "📅",
+  },
+  {
+    title: "Job Board",
+    description: "Niche job board with company profiles, applications, and alerts.",
+    prompt: "Create a niche job board for remote developers with company profiles, job listings, one-click applications, email alerts, and a paid job posting model via Stripe.",
+    category: "Web App",
+    tags: ["Next.js", "Supabase", "Resend"],
+    complexity: "Medium",
+    est_days: 18,
+    color: "#FB923C",
+    icon: "💼",
+  },
+  {
+    title: "Digital Marketplace",
+    description: "Sell digital products — templates, ebooks, courses — with instant delivery.",
+    prompt: "Build a digital products marketplace where creators can sell templates, ebooks, and courses. Include instant delivery, Stripe Connect for payouts, buyer reviews, and a creator dashboard.",
+    category: "E-commerce",
+    tags: ["Next.js", "Stripe Connect", "Supabase"],
+    complexity: "Advanced",
+    est_days: 25,
+    color: "#F472B6",
+    icon: "📦",
+  },
+  {
+    title: "Data Dashboard",
+    description: "Analytics dashboard pulling from multiple data sources with live charts.",
+    prompt: "Create a business analytics dashboard that connects to Google Analytics, Stripe, and Supabase, displays live charts with revenue, user growth, and churn metrics, and supports custom date ranges.",
+    category: "Web App",
+    tags: ["Next.js", "Recharts", "Supabase"],
+    complexity: "Medium",
+    est_days: 12,
+    color: "#FBBF24",
+    icon: "📊",
   },
 ];
 
+const CATEGORIES: Category[] = ["All", "Web App", "Marketing", "Mobile", "Automation", "E-commerce"];
+
+const COMPLEXITY_COLORS = {
+  Starter:  "text-green-400 bg-green-400/8 border-green-400/15",
+  Medium:   "text-yellow-400 bg-yellow-400/8 border-yellow-400/15",
+  Advanced: "text-red-400 bg-red-400/8 border-red-400/15",
+};
+
 export default function ExamplesPage() {
   const router = useRouter();
+  const [activeCategory, setActiveCategory] = useState<Category>("All");
+  const [search, setSearch] = useState("");
 
-  function handleTry(prompt: string) {
-    // Store prompt in sessionStorage and redirect to home
+  const filtered = TEMPLATES.filter((t) => {
+    const matchCat = activeCategory === "All" || t.category === activeCategory;
+    const q = search.toLowerCase();
+    const matchSearch = !q || t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.tags.some((tag) => tag.toLowerCase().includes(q));
+    return matchCat && matchSearch;
+  });
+
+  function useTemplate(prompt: string) {
     sessionStorage.setItem("linqe-prefill", prompt);
     router.push("/?prefill=1");
   }
 
   return (
-    <div className="pt-24 pb-20 px-6 max-w-5xl mx-auto">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">Examples</h1>
-        <p className="text-[#666]">See what you can build with Linqe</p>
+    <div className="pt-24 pb-20 px-6 max-w-6xl mx-auto">
+      {/* Header */}
+      <div className="text-center mb-12 animate-slideUp">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] text-xs font-medium mb-4">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] inline-block" />
+          {TEMPLATES.length} templates
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">Template Catalog</h1>
+        <p className="text-[#555] max-w-md mx-auto text-sm leading-relaxed">
+          Start from a proven template. Pick one, customize the prompt, and get your full project plan in seconds.
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {EXAMPLES.map((example) => (
-          <div
-            key={example.title}
-            className="bg-[#0d0d0d] border border-[#222] rounded-2xl p-5 hover:border-[#444] hover:shadow-[0_0_20px_rgba(255,255,255,0.03)] transition-all group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center mb-4">
-              {example.icon}
-            </div>
-            <h3 className="text-sm font-semibold text-white mb-2">{example.title}</h3>
-            <p className="text-xs text-[#555] mb-5 leading-relaxed">{example.description}</p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleTry(example.prompt)}
-              className="w-full"
+      {/* Search + filters */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-8 animate-slideUp" style={{ animationDelay: "80ms" }}>
+        {/* Search */}
+        <div className="relative flex-1 max-w-xs">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#444]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search templates..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-8 pr-4 py-2 bg-[#0d0d0d] border border-[#1e1e1e] rounded-xl text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#333] transition-colors"
+          />
+        </div>
+
+        {/* Category filters */}
+        <div className="flex flex-wrap gap-1.5">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-150 ${
+                activeCategory === cat
+                  ? "bg-[#38BDF8] text-black"
+                  : "bg-[#0d0d0d] text-[#555] border border-[#1e1e1e] hover:border-[#38BDF8]/30 hover:text-[#888]"
+              }`}
             >
-              Try this
-            </Button>
-          </div>
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-20 text-[#333] animate-fadeIn">
+          <p className="text-4xl mb-3">🔍</p>
+          <p className="text-sm">No templates match &ldquo;{search}&rdquo;</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((t, i) => (
+            <TemplateCard key={t.title} template={t} index={i} onUse={useTemplate} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TemplateCard({
+  template: t,
+  index,
+  onUse,
+}: {
+  template: Template;
+  index: number;
+  onUse: (prompt: string) => void;
+}) {
+  return (
+    <div
+      className="group bg-[#0a0a0a] border border-[#1a1a1a] rounded-2xl p-5 hover:border-[#252525] hover-lift transition-all animate-slideUp flex flex-col"
+      style={{ animationDelay: `${index * 50}ms` }}
+    >
+      {/* Icon + complexity */}
+      <div className="flex items-start justify-between mb-4">
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+          style={{ background: `${t.color}12`, border: `1px solid ${t.color}20` }}
+        >
+          {t.icon}
+        </div>
+        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${COMPLEXITY_COLORS[t.complexity]}`}>
+          {t.complexity}
+        </span>
+      </div>
+
+      {/* Title + description */}
+      <h3 className="text-sm font-semibold text-white mb-1.5">{t.title}</h3>
+      <p className="text-xs text-[#444] leading-relaxed mb-4 flex-1">{t.description}</p>
+
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {t.tags.map((tag) => (
+          <span key={tag} className="px-2 py-0.5 text-[10px] rounded-md bg-[#111] border border-[#1e1e1e] text-[#555]">
+            {tag}
+          </span>
         ))}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-3 border-t border-[#111]">
+        <span className="text-[10px] text-[#333] tabular-nums">~{t.est_days} days</span>
+        <button
+          onClick={() => onUse(t.prompt)}
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-all duration-150 active:scale-95"
+          style={{
+            background: `${t.color}12`,
+            border: `1px solid ${t.color}20`,
+            color: t.color,
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = `${t.color}20`;
+            (e.currentTarget as HTMLElement).style.borderColor = `${t.color}40`;
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = `${t.color}12`;
+            (e.currentTarget as HTMLElement).style.borderColor = `${t.color}20`;
+          }}
+        >
+          Use template
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </div>
   );
