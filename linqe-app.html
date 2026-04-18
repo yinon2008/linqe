@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Linqe — Bring your ideas to life</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Dancing+Script:wght@700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080808;
+    --surface: #111;
+    --surface2: #181818;
+    --border: #222;
+    --border2: #2a2a2a;
+    --text: #fff;
+    --muted: #888;
+    --dim: #555;
+    --accent: #c0264a;
+    --accent-hover: #a01f3d;
+    --accent-light: #e8396a;
+    --green: #22c55e;
+    --red: #ef4444;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+  /* ── Animations ── */
+  @keyframes fadeIn   { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @keyframes slideUp  { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  @keyframes pulse    { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes spin     { to { transform: rotate(360deg); } }
+  @keyframes shimmer  { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+
+  .fade-in  { animation: fadeIn .4s ease-out both; }
+  .slide-up { animation: slideUp .4s ease-out both; }
+
+  /* ── Pages ── */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ══════════════════════════════════════════
+     NAVBAR
+  ══════════════════════════════════════════ */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid #111;
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(12px);
+  }
+  .navbar-logo {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: var(--text);
+    cursor: pointer;
+    user-select: none;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .navbar-logo .dot { color: var(--dim); font-family: 'Inter', sans-serif; font-size: 1.4rem; }
+  .navbar-links {
+    display: flex; align-items: center; gap: 28px;
+    font-size: 0.85rem; color: var(--muted);
+  }
+  .navbar-links a { color: inherit; text-decoration: none; cursor: pointer; transition: color .15s; }
+  .navbar-links a:hover { color: var(--text); }
+  .navbar-actions { display: flex; gap: 10px; align-items: center; }
+
+  /* ══════════════════════════════════════════
+     BUTTONS
+  ══════════════════════════════════════════ */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: none; border-radius: 999px; font-family: inherit; cursor: pointer;
+    font-weight: 500; transition: all .15s; white-space: nowrap;
+  }
+  .btn-sm  { font-size: .8rem;  padding: 6px 16px; }
+  .btn-md  { font-size: .875rem; padding: 10px 22px; }
+  .btn-lg  { font-size: .95rem; padding: 13px 28px; }
+  .btn-xl  { font-size: 1rem;   padding: 15px 32px; }
+
+  .btn-primary   { background: var(--text); color: #000; }
+  .btn-primary:hover { background: #e0e0e0; }
+  .btn-accent    { background: var(--accent); color: #fff; }
+  .btn-accent:hover  { background: var(--accent-hover); }
+  .btn-ghost     { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-ghost:hover   { color: var(--text); border-color: var(--border2); }
+  .btn-outline   { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+  .btn-outline:hover { border-color: #555; }
+  .btn:disabled  { opacity: .4; cursor: not-allowed; }
+
+  /* ══════════════════════════════════════════
+     AUTH PAGE  (Login / Signup)
+  ══════════════════════════════════════════ */
+  .auth-page {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(192,38,74,0.12), transparent);
+    padding: 24px;
+  }
+  .auth-card {
+    width: 100%; max-width: 400px;
+    background: #141414;
+    border: 1px solid #1e1e1e;
+    border-radius: 20px;
+    padding: 40px 36px;
+    animation: fadeIn .4s ease-out;
+  }
+  .auth-logo {
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2rem;
+    margin-bottom: 28px;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auth-logo .logo-icon { font-family: 'Inter', sans-serif; margin-right: 2px; }
+  .auth-title    { font-size: 1.4rem; font-weight: 700; text-align: center; margin-bottom: 6px; }
+  .auth-subtitle { font-size: .83rem; color: var(--muted); text-align: center; margin-bottom: 28px; }
+  .form-group    { margin-bottom: 18px; }
+  .form-label    { display: block; font-size: .83rem; font-weight: 500; margin-bottom: 8px; color: #ccc; }
+  .form-input {
+    width: 100%;
+    background: #0f0f0f;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: .9rem;
+    transition: border-color .15s;
+    outline: none;
+  }
+  .form-input:focus    { border-color: var(--accent); }
+  .form-input::placeholder { color: #444; }
+  .btn-full { width: 100%; border-radius: 10px; padding: 13px; font-size: .9rem; }
+  .auth-footer { text-align: center; margin-top: 18px; font-size: .83rem; color: var(--muted); }
+  .auth-footer a { color: var(--accent-light); cursor: pointer; text-decoration: none; }
+  .auth-footer a:hover { text-decoration: underline; }
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 20px 0; font-size: .78rem; color: var(--dim);
+  }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .btn-google {
+    width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
+    color: var(--text); border-radius: 10px; padding: 11px;
+    font-size: .88rem; font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: border-color .15s;
+  }
+  .btn-google:hover { border-color: #444; }
+
+  /* ══════════════════════════════════════════
+     HOME PAGE
+  ══════════════════════════════════════════ */
+  .home-page {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 100px 24px 60px;
+    background: radial-gradient(ellipse 70% 50% at 50% -5%, rgba(192,38,74,0.1), transparent);
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #111; border: 1px solid #222;
+    border-radius: 999px; padding: 5px 14px;
+    font-size: .75rem; color: var(--muted);
+    margin-bottom: 28px;
+    animation: fadeIn .4s ease-out;
+  }
+  .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-light); }
+  .hero-title {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800; line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 18px;
+    animation: fadeIn .4s .1s ease-out both;
+  }
+  .hero-title span { color: var(--dim); }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted); max-width: 480px;
+    margin-bottom: 40px; line-height: 1.6;
+    animation: fadeIn .4s .2s ease-out both;
+  }
+  .hero-input-wrap {
+    width: 100%; max-width: 620px;
+    animation: fadeIn .4s .3s ease-out both;
+  }
+  .hero-input-box {
+    display: flex; align-items: center; gap: 10px;
+    background: #f0f0f0;
+    border-radius: 999px; padding: 10px 14px 10px 18px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+  }
+  .hero-input-box textarea {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: inherit; font-size: .9rem; color: #111;
+    resize: none; line-height: 1.5; padding: 4px 0; max-height: 120px;
+    overflow: hidden;
+  }
+  .hero-input-box textarea::placeholder { color: #999; }
+  .hero-model-select {
+    background: transparent; border: none; outline: none;
+    font-family: inherit; font-size: .78rem; color: #555;
+    cursor: pointer; padding: 2px 4px;
+  }
+  .divider-v { width: 1px; height: 22px; background: #ccc; flex-shrink: 0; }
+  .hero-submit {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: #000; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background .15s;
+  }
+  .hero-submit:hover { background: #222; }
+  .hero-submit:disabled { opacity: .3; cursor: not-allowed; }
+  .hero-submit svg { color: #fff; }
+
+  .quick-actions {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+    margin-top: 16px;
+  }
+  .quick-btn {
+    background: #111; border: 1px solid #1e1e1e;
+    border-radius: 999px; padding: 6px 14px;
+    font-size: .78rem; color: var(--muted);
+    cursor: pointer; font-family: inherit;
+    transition: all .15s;
+  }
+  .quick-btn:hover { border-color: #333; color: var(--text); }
+
+  /* ══════════════════════════════════════════
+     GENERATE / STREAMING PAGE
+  ══════════════════════════════════════════ */
+  .gen-page {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 20px;
+    padding: 100px 24px;
+  }
+  .gen-logo-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .gen-status { font-size: .9rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+  .gen-dots span {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--dim); animation: pulse 1.2s ease-in-out infinite;
+  }
+  .gen-dots span:nth-child(2) { animation-delay: .2s; }
+  .gen-dots span:nth-child(3) { animation-delay: .4s; }
+  .gen-counter { font-size: .78rem; color: #333; font-family: monospace; }
+  .gen-bar-wrap {
+    width: 320px; height: 3px; background: #1a1a1a; border-radius: 2px; overflow: hidden;
+  }
+  .gen-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 2px;
+    width: 30%;
+    animation: genSlide 2s ease-in-out infinite alternate;
+  }
+  @keyframes genSlide { from { margin-left: 0; } to { margin-left: 70%; } }
+
+  /* ══════════════════════════════════════════
+     PROJECT PAGE
+  ══════════════════════════════════════════ */
+  .project-page { padding: 88px 24px 80px; max-width: 1100px; margin: 0 auto; }
+  .project-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 32px;
+    animation: slideUp .4s ease-out;
+  }
+  .project-title { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+  .project-desc  { color: var(--muted); margin-top: 6px; max-width: 600px; font-size: .9rem; line-height: 1.6; }
+  .project-meta  { display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+  .badge {
+    padding: 5px 14px; border-radius: 999px; font-size: .78rem; font-weight: 500;
+  }
+  .badge-building { background: rgba(234,179,8,0.1); color: #eab308; border: 1px solid rgba(234,179,8,0.2); }
+  .badge-live     { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+  .badge-draft    { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
+  .badge-days     { background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+
+  .project-grid  { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+  @media(max-width: 768px) { .project-grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px; padding: 20px;
+  }
+  .card-title { font-size: .83rem; font-weight: 600; margin-bottom: 16px; }
+
+  /* Deliverables */
+  .deliverable-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #161616;
+  }
+  .deliverable-item:last-child { border-bottom: none; }
+  .del-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: #1a1a1a; border: 1px solid #252525;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .8rem; flex-shrink: 0;
+  }
+  .del-name { font-size: .85rem; font-weight: 500; }
+  .del-hours { font-size: .75rem; color: var(--dim); margin-top: 2px; }
+
+  /* Cost */
+  .cost-row { display: flex; justify-content: space-between; font-size: .85rem; padding: 4px 0; }
+  .cost-label { color: var(--muted); }
+  .cost-value { font-family: monospace; font-weight: 500; }
+  .cost-total { border-top: 1px solid #1a1a1a; padding-top: 12px; margin-top: 8px; font-weight: 600; }
+
+  /* Tasks */
+  .task-section-label {
+    font-size: .7rem; color: #444; text-transform: uppercase;
+    letter-spacing: .08em; margin: 16px 0 8px;
+  }
+  .task-section-label:first-child { margin-top: 0; }
+  .task-card {
+    background: var(--bg); border: 1px solid #161616;
+    border-radius: 14px; padding: 14px;
+    margin-bottom: 8px;
+    display: flex; gap: 12px;
+    transition: border-color .15s;
+    animation: slideUp .3s ease-out both;
+  }
+  .task-card:hover { border-color: var(--border2); }
+  .task-check {
+    width: 20px; height: 20px; border-radius: 5px;
+    border: 1.5px solid #333; background: transparent;
+    cursor: pointer; flex-shrink: 0; margin-top: 1px;
+    accent-color: var(--text);
+  }
+  .task-check-done {
+    width: 20px; height: 20px; border-radius: 5px;
+    background: var(--green); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .task-check-connecting {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 2px solid #333; border-top-color: var(--text);
+    animation: spin .7s linear infinite; flex-shrink: 0;
+  }
+  .task-title { font-size: .85rem; font-weight: 500; }
+  .task-title.done { color: var(--dim); text-decoration: line-through; }
+  .task-desc  { font-size: .75rem; color: var(--dim); margin-top: 3px; line-height: 1.5; }
+  .task-meta  { display: flex; align-items: center; gap: 8px; margin-top: 1px; flex-wrap: wrap; }
+  .task-cost  { font-size: .73rem; color: var(--dim); font-family: monospace; }
+  .task-connect-btn {
+    margin-top: 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 999px;
+    background: #111; border: 1px solid #222;
+    color: var(--muted); font-size: .73rem; font-family: inherit;
+    cursor: pointer; transition: all .15s;
+  }
+  .task-connect-btn:hover { color: var(--text); border-color: #444; }
+  .status-badge {
+    font-size: .68rem; padding: 2px 8px; border-radius: 999px; font-weight: 500;
+  }
+  .status-pending    { background: rgba(148,163,184,.1); color: #94a3b8; }
+  .status-connecting { background: rgba(251,191,36,.1);  color: #fbbf24; }
+  .status-connected  { background: rgba(34,197,94,.1);   color: #22c55e; }
+  .status-failed     { background: rgba(239,68,68,.1);   color: #ef4444; }
+
+  /* ══════════════════════════════════════════
+     DASHBOARD PAGE
+  ══════════════════════════════════════════ */
+  .dashboard-page { padding: 100px 28px 80px; max-width: 1100px; margin: 0 auto; }
+  .dash-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px; gap: 12px; flex-wrap: wrap;
+  }
+  .dash-title    { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+  .dash-subtitle { color: var(--muted); font-size: .87rem; margin-top: 4px; }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .project-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    cursor: pointer; transition: border-color .2s, transform .15s;
+  }
+  .project-card:hover { border-color: #333; transform: translateY(-2px); }
+  .pc-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .pc-title  { font-size: .95rem; font-weight: 600; }
+  .pc-desc   { font-size: .8rem; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+  .pc-footer { display: flex; align-items: center; justify-content: space-between; }
+  .pc-date   { font-size: .73rem; color: var(--dim); }
+  .pc-tasks  { font-size: .73rem; color: var(--dim); }
+  .empty-state {
+    text-align: center; padding: 80px 24px;
+    grid-column: 1 / -1;
+  }
+  .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+  .empty-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+  .empty-sub   { color: var(--muted); font-size: .875rem; }
+
+  /* ══════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════ */
+  #toast-container {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+  }
+  .toast {
+    pointer-events: auto;
+    padding: 12px 18px; border-radius: 12px;
+    font-size: .85rem; font-weight: 500;
+    animation: slideUp .3s ease-out;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    max-width: 320px;
+  }
+  .toast-error   { background: #ef4444; color: #fff; }
+  .toast-success { background: #22c55e; color: #fff; }
+  .toast-info    { background: #1a1a1a; border: 1px solid #2a2a2a; color: var(--text); }
+
+  /* ══════════════════════════════════════════
+     SPINNER
+  ══════════════════════════════════════════ */
+  .spinner {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid #333; border-top-color: var(--text);
+    animation: spin .6s linear infinite; display: inline-block;
+  }
+  .spinner-sm { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAVBAR ═══ -->
+<nav class="navbar" id="navbar" style="display:none">
+  <div class="navbar-logo" onclick="navigate('home')">
+    ✦ Linqe<span class="dot">*</span>
+  </div>
+  <div class="navbar-links">
+    <a onclick="navigate('home')">Home</a>
+    <a onclick="navigate('examples')">Examples</a>
+    <a href="#">Pricing</a>
+    <a href="#">Docs</a>
+  </div>
+  <div class="navbar-actions">
+    <div id="nav-auth"></div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════ PAGES ═══ -->
+
+<!-- LOGIN -->
+<div class="page active" id="page-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">✦ Linqe</div>
+      <h1 class="auth-title">Sign in</h1>
+      <p class="auth-subtitle">Enter your email and password to access your account</p>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="login-email" placeholder="you@example.com" value="" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="login-pass" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn btn-accent btn-full" id="login-btn">Sign in</button>
+      </form>
+
+      <div class="divider">or</div>
+
+      <button class="btn-google" onclick="handleGoogleLogin()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <p class="auth-footer">Don't have an account? <a onclick="navigate('signup')">Sign up</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP -->
+<div class="page" id="page-signup">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">✦ Linqe</div>
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-subtitle">Start building your next big idea today</p>
+
+      <form onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label">Full name</label>
+          <input class="form-input" type="text" id="signup-name" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="signup-pass" placeholder="Min 8 characters" />
+        </div>
+        <button type="submit" class="btn btn-accent btn-full" id="signup-btn">Create account</button>
+      </form>
+
+      <div class="divider">or</div>
+      <button class="btn-google" onclick="handleGoogleLogin()">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <p class="auth-footer">Already have an account? <a onclick="navigate('login')">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page" id="page-home">
+  <section class="home-page">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Powered by Claude Opus 4.6</div>
+    <h1 class="hero-title">Bring your ideas<br /><span>to life</span></h1>
+    <p class="hero-sub">Describe what you want to build and get a complete project plan with tasks, timeline, and cost estimate — instantly.</p>
+
+    <div class="hero-input-wrap">
+      <div class="hero-input-box">
+        <select class="hero-model-select" id="model-select">
+          <option value="claude-opus-4-6">Opus 4.6</option>
+          <option value="claude-sonnet-4-6">Sonnet 4.6</option>
+        </select>
+        <div class="divider-v"></div>
+        <textarea
+          id="hero-prompt"
+          placeholder="Describe what you want to build..."
+          rows="1"
+          oninput="autoResize(this)"
+          onkeydown="handleHeroKey(event)"
+        ></textarea>
+        <button class="hero-submit" id="hero-submit-btn" onclick="handleGenerate()" disabled>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="prefill('SaaS landing page with waitlist, email capture, and analytics')">SaaS landing page</button>
+        <button class="quick-btn" onclick="prefill('E-commerce store with Stripe payments, product catalog, and inventory management')">E-commerce store</button>
+        <button class="quick-btn" onclick="prefill('Mobile app for tracking daily habits with streaks and reminders')">Habit tracker app</button>
+        <button class="quick-btn" onclick="prefill('AI-powered blog platform with auto-generated SEO content')">AI blog platform</button>
+        <button class="quick-btn" onclick="prefill('B2B dashboard with user management, billing, and analytics')">B2B dashboard</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- GENERATING -->
+<div class="page" id="page-generating">
+  <div class="gen-page">
+    <div class="gen-logo-text">✦ Linqe</div>
+    <div class="gen-status">
+      Generating your project plan
+      <span class="gen-dots"><span></span><span></span><span></span></span>
+    </div>
+    <div class="gen-bar-wrap"><div class="gen-bar"></div></div>
+    <div class="gen-counter" id="gen-counter">Initializing Claude…</div>
+  </div>
+</div>
+
+<!-- PROJECT -->
+<div class="page" id="page-project">
+  <div class="project-page" id="project-content"></div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="page-dashboard">
+  <div class="dashboard-page">
+    <div class="dash-header">
+      <div>
+        <h1 class="dash-title">My Projects</h1>
+        <p class="dash-subtitle">All your AI-generated project plans</p>
+      </div>
+      <button class="btn btn-primary btn-md" onclick="navigate('home')">+ New Project</button>
+    </div>
+    <div class="projects-grid" id="projects-grid"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════ SCRIPT ═══ -->
+<script>
+// ── State ──────────────────────────────────────────
+const state = {
+  user: null,
+  projects: [],
+  currentProject: null,
+};
+
+// ── Sample project data ─────────────────────────────
+const SAMPLE_PLAN = {
+  project_title: "SaaS Landing Page with Waitlist",
+  project_description: "A conversion-focused landing page with hero section, feature highlights, social proof, and an email waitlist powered by Resend — deployed to Vercel with analytics.",
+  timeline_days: 14,
+  deliverables: [
+    {
+      id: "del_1", title: "Landing Page", type: "landing_page",
+      description: "Hero, features, testimonials, and CTA sections",
+      estimated_hours: 12,
+      tasks: [
+        { id: "t1", title: "Design hero section and layout", description: "Create wireframes and Figma designs for the hero, navbar, and overall layout", status: "pending", automation_type: "none", estimated_cost_usd: 0 },
+        { id: "t2", title: "Implement responsive design", description: "Build the full page with Tailwind CSS, mobile-first approach", status: "pending", automation_type: "none", estimated_cost_usd: 0 },
+        { id: "t3", title: "Connect custom domain", description: "Purchase and configure a .com domain via Namecheap or Cloudflare", status: "pending", automation_type: "domain", estimated_cost_usd: 14 },
+      ]
+    },
+    {
+      id: "del_2", title: "Waitlist System", type: "lead_system",
+      description: "Email capture with confirmation flow",
+      estimated_hours: 6,
+      tasks: [
+        { id: "t4", title: "Setup email provider", description: "Configure Resend for transactional emails and confirmation flow", status: "pending", automation_type: "email", estimated_cost_usd: 0 },
+        { id: "t5", title: "Build waitlist API", description: "Create serverless API endpoint to store emails in Supabase postgres", status: "pending", automation_type: "database", estimated_cost_usd: 0 },
+        { id: "t6", title: "Deploy to production", description: "Deploy to Vercel with CI/CD, set environment variables", status: "pending", automation_type: "hosting", estimated_cost_usd: 0 },
+      ]
+    },
+    {
+      id: "del_3", title: "Analytics & Tracking", type: "integration",
+      description: "Visitor analytics and conversion tracking",
+      estimated_hours: 4,
+      tasks: [
+        { id: "t7", title: "Integrate Plausible Analytics", description: "Privacy-friendly analytics with goal tracking for waitlist signups", status: "pending", automation_type: "api", estimated_cost_usd: 9 },
+        { id: "t8", title: "Add conversion events", description: "Track CTA clicks, form submissions, and scroll depth", status: "pending", automation_type: "none", estimated_cost_usd: 0 },
+      ]
+    }
+  ],
+  cost_breakdown: {
+    monthly_recurring: [
+      { item: "Vercel Pro",       cost_usd: 20 },
+      { item: "Supabase Free",    cost_usd: 0  },
+      { item: "Resend Free tier", cost_usd: 0  },
+      { item: "Plausible",        cost_usd: 9  },
+    ],
+    one_time: [
+      { item: "Domain (.com)",    cost_usd: 14 },
+      { item: "Figma assets",     cost_usd: 0  },
+    ],
+    total_monthly_usd: 29,
+    total_one_time_usd: 14,
+  }
+};
+
+// ── Router ─────────────────────────────────────────
+function navigate(page, data = null) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(`page-${page}`);
+  if (target) target.classList.add('active');
+  window.scrollTo(0, 0);
+
+  const navbar = document.getElementById('navbar');
+  navbar.style.display = ['login','signup'].includes(page) ? 'none' : 'flex';
+
+  updateNavAuth();
+
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'project' && data) renderProject(data);
+  if (page === 'project' && !data && state.currentProject) renderProject(state.currentProject);
+}
+
+// ── Auth ────────────────────────────────────────────
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Signing in…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    state.user = { email: document.getElementById('login-email').value || 'user@example.com', name: 'User' };
+    showToast('Welcome back!', 'success');
+    navigate('home');
+    btn.textContent = 'Sign in';
+    btn.disabled = false;
+  }, 1200);
+}
+
+function handleSignup(e) {
+  e.preventDefault();
+  const btn = document.getElementById('signup-btn');
+  btn.textContent = 'Creating account…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const name = document.getElementById('signup-name').value || 'User';
+    const email = document.getElementById('signup-email').value || 'user@example.com';
+    state.user = { email, name };
+    showToast(`Welcome, ${name.split(' ')[0]}!`, 'success');
+    navigate('home');
+    btn.textContent = 'Create account';
+    btn.disabled = false;
+  }, 1200);
+}
+
+function handleGoogleLogin() {
+  showToast('Redirecting to Google…', 'info');
+  setTimeout(() => {
+    state.user = { email: 'demo@gmail.com', name: 'Demo User' };
+    showToast('Signed in with Google!', 'success');
+    navigate('home');
+  }, 1500);
+}
+
+function handleSignOut() {
+  state.user = null;
+  showToast('Signed out', 'info');
+  navigate('login');
+}
+
+function updateNavAuth() {
+  const el = document.getElementById('nav-auth');
+  if (!el) return;
+  if (state.user) {
+    el.innerHTML = `
+      <div style="display:flex;gap:10px;align-items:center">
+        <div onclick="navigate('dashboard')" style="cursor:pointer;width:32px;height:32px;border-radius:50%;background:#222;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600">
+          ${state.user.email[0].toUpperCase()}
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="handleSignOut()">Sign out</button>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Log in</button>
+        <button class="btn btn-primary btn-sm" onclick="navigate('signup')">Get started</button>
+      </div>`;
+  }
+}
+
+// ── Hero Input ──────────────────────────────────────
+const promptInput = document.getElementById('hero-prompt');
+const submitBtn   = document.getElementById('hero-submit-btn');
+
+promptInput.addEventListener('input', () => {
+  submitBtn.disabled = !promptInput.value.trim();
+});
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 128) + 'px';
+}
+
+function handleHeroKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleGenerate(); }
+}
+
+function prefill(text) {
+  promptInput.value = text;
+  autoResize(promptInput);
+  submitBtn.disabled = false;
+  promptInput.focus();
+}
+
+// ── Generation ──────────────────────────────────────
+let genInterval;
+let genChars = 0;
+
+function handleGenerate() {
+  const prompt = promptInput.value.trim();
+  if (!prompt) return;
+
+  navigate('generating');
+  genChars = 0;
+  document.getElementById('gen-counter').textContent = 'Connecting to Claude…';
+
+  // Simulate streaming
+  genInterval = setInterval(() => {
+    genChars += Math.floor(Math.random() * 80) + 20;
+    document.getElementById('gen-counter').textContent = `${genChars.toLocaleString()} chars received…`;
+  }, 300);
+
+  // Simulate completion after ~3s
+  setTimeout(() => {
+    clearInterval(genInterval);
+    const plan = generatePlanFromPrompt(prompt);
+    state.currentProject = plan;
+    state.projects.unshift({
+      id: 'proj_' + Date.now(),
+      title: plan.project_title,
+      description: plan.project_description,
+      plan,
+      status: 'building',
+      tasks: plan.deliverables.flatMap(d => d.tasks).length,
+      created_at: new Date().toISOString(),
+    });
+    navigate('project', plan);
+    promptInput.value = '';
+    submitBtn.disabled = true;
+  }, 3000);
+}
+
+function generatePlanFromPrompt(prompt) {
+  // Return the sample plan with the title customised to the prompt
+  const words = prompt.split(' ').slice(0, 6).join(' ');
+  return {
+    ...SAMPLE_PLAN,
+    project_title: words.charAt(0).toUpperCase() + words.slice(1),
+    project_description: prompt,
+  };
+}
+
+// ── Project Render ──────────────────────────────────
+const TYPE_ICONS = { landing_page: '🖥', web_app: '⚡', lead_system: '📬', design: '🎨', automation: '🤖', integration: '🔗' };
+const CONNECT_LABELS = { domain: 'Connect Domain', payment: 'Connect Stripe', database: 'Setup Supabase', hosting: 'Deploy to Vercel', email: 'Setup Resend', api: 'Connect API' };
+
+function renderProject(plan) {
+  const el = document.getElementById('project-content');
+  const allTasks = plan.deliverables.flatMap(d => d.tasks);
+
+  el.innerHTML = `
+    <div class="project-header">
+      <div>
+        <h1 class="project-title">${esc(plan.project_title)}</h1>
+        <p class="project-desc">${esc(plan.project_description)}</p>
+      </div>
+      <div class="project-meta">
+        <span class="badge badge-days">Ready in ${plan.timeline_days} days</span>
+        <span class="badge badge-building">building</span>
+      </div>
+    </div>
+
+    <div class="project-grid">
+      <!-- Left column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- Deliverables -->
+        <div class="card">
+          <p class="card-title">Deliverables</p>
+          ${plan.deliverables.map(d => `
+            <div class="deliverable-item">
+              <div class="del-icon">${TYPE_ICONS[d.type] || '📦'}</div>
+              <div>
+                <div class="del-name">${esc(d.title)}</div>
+                <div class="del-hours">${d.estimated_hours}h · ${d.tasks.length} tasks</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Cost Summary -->
+        <div class="card">
+          <p class="card-title">Cost Summary</p>
+          ${plan.cost_breakdown.monthly_recurring.length ? `
+            <p style="font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Monthly</p>
+            ${plan.cost_breakdown.monthly_recurring.map(i => `
+              <div class="cost-row"><span class="cost-label">${esc(i.item)}</span><span class="cost-value">$${i.cost_usd.toFixed(2)}</span></div>
+            `).join('')}
+          ` : ''}
+          ${plan.cost_breakdown.one_time.length ? `
+            <p style="font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin:12px 0 8px">One-time</p>
+            ${plan.cost_breakdown.one_time.map(i => `
+              <div class="cost-row"><span class="cost-label">${esc(i.item)}</span><span class="cost-value">$${i.cost_usd.toFixed(2)}</span></div>
+            `).join('')}
+          ` : ''}
+          <div class="cost-total">
+            <div class="cost-row"><span class="cost-label">Total monthly</span><span class="cost-value">$${plan.cost_breakdown.total_monthly_usd.toFixed(2)}/mo</span></div>
+            <div class="cost-row"><span class="cost-label">Total one-time</span><span class="cost-value">$${plan.cost_breakdown.total_one_time_usd.toFixed(2)}</span></div>
+          </div>
+          <button class="btn btn-accent" style="width:100%;margin-top:16px;border-radius:10px;padding:12px" onclick="handleLaunch(this)">
+            Launch Project
+          </button>
+        </div>
+      </div>
+
+      <!-- Right column: Tasks -->
+      <div class="card" style="align-self:start">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <p class="card-title" style="margin:0">Task Checklist</p>
+          <span style="font-size:.73rem;color:var(--dim)">${allTasks.length} tasks</span>
+        </div>
+        ${plan.deliverables.map(d => `
+          <p class="task-section-label">${esc(d.title)}</p>
+          ${d.tasks.map((t, idx) => renderTask(t, idx)).join('')}
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderTask(task, idx) {
+  const taskStates = window._taskStates || (window._taskStates = {});
+  const status = taskStates[task.id] || task.status;
+  const delay = idx * 40;
+
+  const checkEl = status === 'connecting'
+    ? `<div class="task-check-connecting" id="chk-${task.id}"></div>`
+    : status === 'connected'
+      ? `<div class="task-check-done" id="chk-${task.id}"><svg width="10" height="10" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>`
+      : `<input type="checkbox" class="task-check" id="chk-${task.id}" ${status === 'connected' ? 'checked' : ''} onchange="handleTaskCheck('${task.id}', this.checked)" />`;
+
+  const connectBtn = task.automation_type !== 'none' && status === 'pending'
+    ? `<button class="task-connect-btn" onclick="handleTaskConnect('${task.id}')">
+        <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+        </svg>
+        ${CONNECT_LABELS[task.automation_type] || 'Auto-connect'}
+      </button>`
+    : '';
+
+  const statusBadge = `<span class="status-badge status-${status}">${status}</span>`;
+
+  return `
+    <div class="task-card" style="animation-delay:${delay}ms" id="task-card-${task.id}">
+      <div style="flex-shrink:0;margin-top:1px">${checkEl}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <p class="task-title ${status === 'connected' ? 'done' : ''}">${esc(task.title)}</p>
+          <div class="task-meta">
+            <span class="task-cost">$${task.estimated_cost_usd.toFixed(2)}</span>
+            ${statusBadge}
+          </div>
+        </div>
+        <p class="task-desc">${esc(task.description)}</p>
+        ${connectBtn}
+      </div>
+    </div>`;
+}
+
+function handleTaskCheck(id, checked) {
+  if (!checked) return;
+  handleTaskConnect(id);
+}
+
+function handleTaskConnect(id) {
+  if (!window._taskStates) window._taskStates = {};
+  window._taskStates[id] = 'connecting';
+  refreshTask(id);
+
+  setTimeout(() => {
+    window._taskStates[id] = 'connected';
+    refreshTask(id);
+    showToast('Task connected!', 'success');
+  }, 3000);
+}
+
+function refreshTask(id) {
+  if (!state.currentProject) return;
+  const plan = state.currentProject;
+  for (const d of plan.deliverables) {
+    const task = d.tasks.find(t => t.id === id);
+    if (task) {
+      const idx = d.tasks.indexOf(task);
+      const card = document.getElementById(`task-card-${id}`);
+      if (card) card.outerHTML = renderTask(task, idx);
+      return;
+    }
+  }
+}
+
+function handleLaunch(btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner spinner-sm" style="border-top-color:#fff"></span> Launching…';
+  setTimeout(() => {
+    btn.textContent = '🚀 Project launched!';
+    btn.style.background = 'var(--green)';
+    showToast('Project marked as live!', 'success');
+  }, 1500);
+}
+
+// ── Dashboard ────────────────────────────────────────
+function renderDashboard() {
+  const grid = document.getElementById('projects-grid');
+  if (!state.projects.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">💡</div>
+        <p class="empty-title">No projects yet</p>
+        <p class="empty-sub">Describe an idea to generate your first project plan</p>
+        <button class="btn btn-primary btn-md" style="margin-top:20px" onclick="navigate('home')">Get started</button>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = state.projects.map(p => `
+    <div class="project-card" onclick="navigate('project', ${JSON.stringify(p.plan).replace(/</g,'\\u003c')})">
+      <div class="pc-header">
+        <p class="pc-title">${esc(p.title)}</p>
+        <span class="badge badge-${p.status}">${p.status}</span>
+      </div>
+      <p class="pc-desc">${esc(p.description.slice(0, 100))}${p.description.length > 100 ? '…' : ''}</p>
+      <div class="pc-footer">
+        <span class="pc-date">${new Date(p.created_at).toLocaleDateString()}</span>
+        <span class="pc-tasks">${p.tasks} tasks</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Toast ─────────────────────────────────────────────
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+// ── Utilities ─────────────────────────────────────────
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Init ──────────────────────────────────────────────
+navigate('login');
+</script>
+</body>
+</html>
