@@ -7,6 +7,7 @@ export type AutomationType =
   | "database"
   | "hosting"
   | "api"
+  | "social"
   | "none";
 
 export type DeliverableType =
@@ -50,6 +51,11 @@ export interface ProjectPlan {
   timeline_days: number;
 }
 
+export interface DesignSettings {
+  color: string;
+  font: "default" | "mono" | "serif";
+}
+
 export interface Project {
   id: string;
   user_id: string;
@@ -58,6 +64,9 @@ export interface Project {
   raw_prompt: string;
   ai_response: ProjectPlan | null;
   status: "draft" | "building" | "live";
+  is_public: boolean;
+  budget_usd: number | null;
+  design_settings: DesignSettings | null;
   created_at: string;
 }
 

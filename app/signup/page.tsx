@@ -48,16 +48,23 @@ function StrengthBar({ password }: { password: string }) {
 }
 
 export default function SignupPage() {
-  const [email, setEmail]       = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState("");
-  const [success, setSuccess]   = useState(false);
-  const [shaking, setShaking]   = useState(false);
+  const [email, setEmail]             = useState("");
+  const [password, setPassword]       = useState("");
+  const [confirmPassword, setConfirm] = useState("");
+  const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState("");
+  const [success, setSuccess]         = useState(false);
+  const [shaking, setShaking]         = useState(false);
   const supabase = createClient();
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setShaking(true);
+      setTimeout(() => setShaking(false), 450);
+      return;
+    }
     setLoading(true);
     setError("");
 
@@ -260,6 +267,25 @@ export default function SignupPage() {
                 }`}
               />
               {password.length > 0 && <StrengthBar password={password} />}
+            </div>
+            <div>
+              <label className="block text-xs text-[#444] mb-1.5 font-medium">Confirm password</label>
+              <input
+                type="password"
+                placeholder="Repeat your password"
+                value={confirmPassword}
+                onChange={(e) => { setConfirm(e.target.value); setError(""); }}
+                required
+                autoComplete="new-password"
+                className={`w-full px-4 py-3 bg-[#0d0d0d] border rounded-xl text-white placeholder-[#333] text-sm focus:outline-none transition-colors ${
+                  confirmPassword && confirmPassword !== password
+                    ? "border-red-500/40 focus:border-red-500/60"
+                    : "border-[#1e1e1e] focus:border-[#38BDF8]/30"
+                }`}
+              />
+              {confirmPassword && confirmPassword !== password && (
+                <p className="text-xs text-red-400/70 mt-1.5">Passwords do not match</p>
+              )}
             </div>
 
             {error && (

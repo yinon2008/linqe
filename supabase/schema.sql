@@ -58,3 +58,14 @@ create policy "Allow null user_id project insert" on projects
 
 create policy "Public projects are visible" on projects
   for select using (user_id is null or auth.uid() = user_id);
+
+-- ─── Migration: community features ───────────────────────────────────────────
+-- Run this block in Supabase SQL editor if the columns don't exist yet:
+--
+--   alter table projects add column if not exists is_public boolean not null default false;
+--   alter table projects add column if not exists budget_usd numeric;
+--   alter table projects add column if not exists design_settings jsonb;
+--
+--   create policy if not exists "Anyone can view public projects" on projects
+--     for select using (is_public = true);
+-- ─────────────────────────────────────────────────────────────────────────────
