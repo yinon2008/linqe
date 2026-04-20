@@ -27,7 +27,7 @@ const TEMPLATES: Template[] = [
     complexity: "Advanced",
     est_days: 21,
     color: "#38BDF8",
-    icon: "⚡",
+    icon: "SS",
   },
   {
     title: "Landing Page",
@@ -38,7 +38,7 @@ const TEMPLATES: Template[] = [
     complexity: "Starter",
     est_days: 5,
     color: "#A78BFA",
-    icon: "🚀",
+    icon: "LP",
   },
   {
     title: "Fitness App",
@@ -49,7 +49,7 @@ const TEMPLATES: Template[] = [
     complexity: "Advanced",
     est_days: 28,
     color: "#34D399",
-    icon: "💪",
+    icon: "FA",
   },
   {
     title: "Lead Machine",
@@ -60,7 +60,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 14,
     color: "#FB923C",
-    icon: "🎯",
+    icon: "LM",
   },
   {
     title: "E-commerce Store",
@@ -71,7 +71,7 @@ const TEMPLATES: Template[] = [
     complexity: "Advanced",
     est_days: 21,
     color: "#F472B6",
-    icon: "🛍️",
+    icon: "ES",
   },
   {
     title: "Automation Pipeline",
@@ -82,7 +82,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 10,
     color: "#FBBF24",
-    icon: "⚙️",
+    icon: "AP",
   },
   {
     title: "AI Chatbot",
@@ -93,7 +93,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 12,
     color: "#38BDF8",
-    icon: "🤖",
+    icon: "AI",
   },
   {
     title: "Newsletter Platform",
@@ -104,7 +104,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 14,
     color: "#A78BFA",
-    icon: "📧",
+    icon: "NL",
   },
   {
     title: "Booking System",
@@ -115,7 +115,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 16,
     color: "#34D399",
-    icon: "📅",
+    icon: "BS",
   },
   {
     title: "Job Board",
@@ -126,7 +126,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 18,
     color: "#FB923C",
-    icon: "💼",
+    icon: "JB",
   },
   {
     title: "Digital Marketplace",
@@ -137,7 +137,7 @@ const TEMPLATES: Template[] = [
     complexity: "Advanced",
     est_days: 25,
     color: "#F472B6",
-    icon: "📦",
+    icon: "DM",
   },
   {
     title: "Data Dashboard",
@@ -148,7 +148,7 @@ const TEMPLATES: Template[] = [
     complexity: "Medium",
     est_days: 12,
     color: "#FBBF24",
-    icon: "📊",
+    icon: "DD",
   },
 ];
 
@@ -228,7 +228,6 @@ export default function ExamplesPage() {
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-[#333] animate-fadeIn">
-          <p className="text-4xl mb-3">🔍</p>
           <p className="text-sm">No templates match &ldquo;{search}&rdquo;</p>
         </div>
       ) : (
@@ -259,8 +258,8 @@ function TemplateCard({
       {/* Icon + complexity */}
       <div className="flex items-start justify-between mb-4">
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-          style={{ background: `${t.color}12`, border: `1px solid ${t.color}20` }}
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-[11px] font-bold tracking-wide"
+          style={{ background: `${t.color}12`, border: `1px solid ${t.color}20`, color: t.color }}
         >
           {t.icon}
         </div>

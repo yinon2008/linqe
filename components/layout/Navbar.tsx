@@ -88,17 +88,17 @@ export function Navbar() {
           {user ? (
             <>
               <Link
+                href="/settings"
+                className="text-sm text-[#555] hover:text-white transition-colors"
+              >
+                Settings
+              </Link>
+              <Link
                 href="/dashboard"
                 className="w-8 h-8 rounded-full bg-[#111] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-semibold hover:border-[#38BDF8]/40 transition-colors"
               >
                 {user.email?.charAt(0).toUpperCase()}
               </Link>
-              <button
-                onClick={handleSignOut}
-                className="text-sm text-[#555] hover:text-white transition-colors"
-              >
-                Sign out
-              </button>
             </>
           ) : (
             <>
@@ -164,6 +164,13 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Dashboard
+                </Link>
+                <Link
+                  href="/settings"
+                  className="text-sm text-[#888] hover:text-white transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Settings
                 </Link>
                 <button
                   onClick={handleSignOut}

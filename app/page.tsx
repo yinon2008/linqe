@@ -37,13 +37,13 @@ export default function HomePage() {
 
         {/* Subtitle */}
         <p
-          className="text-[#777] text-lg mb-10 max-w-md animate-slideUp leading-relaxed"
-          style={{ animationDelay: "160ms" }}
+          className="text-[#666] text-lg font-light tracking-wide mb-10 max-w-md animate-slideUp"
+          style={{ animationDelay: "160ms", lineHeight: "1.75" }}
         >
           Describe what you want to build. Get a{" "}
-          <span className="text-[#aaa]">complete plan</span>,{" "}
-          <span className="text-[#aaa]">costs</span>, and a{" "}
-          <span className="text-[#aaa]">launch checklist</span>{" "}
+          <span className="text-white font-normal">complete plan</span>,{" "}
+          <span className="text-white font-normal">costs</span>, and a{" "}
+          <span className="text-white font-normal">launch checklist</span>{" "}
           — in seconds.
         </p>
 

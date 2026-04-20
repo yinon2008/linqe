@@ -99,14 +99,14 @@ export function HeroInput() {
               : "border-[#1e1e1e] hover:border-[#2a2a2a]"
           }`}
         >
-          <div className="flex items-end gap-3">
+          <div className="flex items-center gap-3">
             {/* Model selector */}
-            <div className="flex-shrink-0 pb-0.5">
+            <div className="flex-shrink-0">
               <ModelSelector value={model} onChange={setModel} />
             </div>
 
             {/* Divider */}
-            <div className="w-px h-5 bg-[#2a2a2a] flex-shrink-0 mb-0.5" />
+            <div className="w-px h-5 bg-[#2a2a2a] flex-shrink-0" />
 
             {/* Textarea */}
             <textarea
@@ -130,7 +130,7 @@ export function HeroInput() {
             <button
               type="submit"
               disabled={!prompt.trim() || loading || isOverLimit}
-              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-[#38BDF8] text-black disabled:opacity-20 hover:bg-[#7DD3FC] active:scale-95 transition-all duration-150 mb-0.5"
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-xl bg-[#38BDF8] text-black disabled:opacity-20 hover:bg-[#7DD3FC] active:scale-95 transition-all duration-150"
               title="Generate plan (Enter)"
             >
               {loading ? (
