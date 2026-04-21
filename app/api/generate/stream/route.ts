@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
         );
 
         if (allTasks.length > 0) {
-          await adminClient.from("tasks").insert(allTasks);
+          await adminClient.from("tasks").upsert(allTasks, { onConflict: "id" });
         }
 
         send(controller, { done: true, plan });

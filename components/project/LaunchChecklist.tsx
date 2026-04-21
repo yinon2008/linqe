@@ -15,6 +15,7 @@ interface LaunchStep {
 interface LaunchChecklistProps {
   tasks: Task[];
   projectId: string;
+  onLaunch?: () => void;
 }
 
 const STEP_META: Record<string, { label: string; description: string; critical: boolean }> = {
@@ -106,7 +107,7 @@ function StepRow({
   );
 }
 
-export function LaunchChecklist({ tasks, projectId }: LaunchChecklistProps) {
+export function LaunchChecklist({ tasks, projectId, onLaunch }: LaunchChecklistProps) {
   const [statuses, setStatuses] = useState<Record<string, TaskStatus>>(() =>
     Object.fromEntries(tasks.map((t) => [t.id, t.status]))
   );
@@ -179,6 +180,7 @@ export function LaunchChecklist({ tasks, projectId }: LaunchChecklistProps) {
       const res = await fetch(`/api/projects/${projectId}/launch`, { method: "POST" });
       if (res.ok) {
         setLaunched(true);
+        onLaunch?.();
       }
     } finally {
       setLaunching(false);

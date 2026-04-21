@@ -57,6 +57,7 @@ export default function ProjectPage() {
   const [isPublic, setIsPublic]           = useState(false);
   const [budget, setBudget]               = useState<number | null>(null);
   const [designSettings, setDesignSettings] = useState<DesignSettings>({ color: "#38BDF8", font: "default" });
+  const [projectStatus, setProjectStatus] = useState<string>("building");
 
   // Edit mode
   const [editMode, setEditMode]     = useState(false);
@@ -108,7 +109,7 @@ export default function ProjectPage() {
     if (status !== "done" || !id) return;
     supabase
       .from("projects")
-      .select("is_public, budget_usd, design_settings")
+      .select("is_public, budget_usd, design_settings, status")
       .eq("id", id)
       .single()
       .then(({ data }) => {
@@ -116,6 +117,7 @@ export default function ProjectPage() {
         setIsPublic(data.is_public ?? false);
         setBudget(data.budget_usd ?? null);
         setDesignSettings(data.design_settings ?? { color: "#38BDF8", font: "default" });
+        setProjectStatus(data.status ?? "building");
       });
   }, [status, id]);
 
@@ -268,7 +270,7 @@ export default function ProjectPage() {
             <span className="px-3 py-1.5 rounded-full bg-[#0d0d0d] border border-[#1a1a1a] text-xs text-[#555]">
               ~{plan.timeline_days} days
             </span>
-            <Badge status="building" label="building" />
+            <Badge status={projectStatus} label={projectStatus} />
 
             {/* Edit toggle */}
             {editMode ? (
@@ -535,7 +537,7 @@ export default function ProjectPage() {
           </div>
 
           <div className="animate-slideUp" style={{ animationDelay: "140ms" }}>
-            <LaunchChecklist tasks={allTasks} projectId={id} />
+            <LaunchChecklist tasks={allTasks} projectId={id} onLaunch={() => setProjectStatus("live")} />
           </div>
         </div>
       </div>
