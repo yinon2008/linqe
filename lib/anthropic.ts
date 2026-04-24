@@ -56,3 +56,51 @@ export const CACHED_SYSTEM = [
     cache_control: { type: "ephemeral" as const },
   },
 ];
+
+// ── Live Preview Mode ─────────────────────────────────────────────────────────
+
+export const LIVE_PREVIEW_SYSTEM_PROMPT = `You are a web app builder. When given a description, produce a single self-contained HTML file that runs immediately in a browser.
+
+Rules:
+- Put ALL HTML, CSS, and JavaScript in one file — no external files, no build step
+- Use CDN imports for any libraries (e.g. Tailwind via CDN script, React via unpkg if needed, or plain Vanilla JS)
+- The app must be fully functional and interactive
+- Wrap the ENTIRE file in exactly this tag (no extra text outside it):
+
+<file path="index.html">
+<!DOCTYPE html>
+...full file content...
+</file>
+
+Output ONLY the file tag and its contents. No explanation, no markdown fences, nothing else.`;
+
+export const LIVE_PREVIEW_EDITOR_SYSTEM_PROMPT = `You are a web app editor. The user will ask you to modify an existing web app.
+
+Rules:
+- Return the COMPLETE updated HTML file — not a diff, not just the changed section
+- Keep all existing functionality unless the user explicitly asks to remove it
+- All HTML, CSS, and JavaScript must stay in one self-contained file
+- Wrap the ENTIRE file in exactly this tag (no extra text outside it):
+
+<file path="index.html">
+<!DOCTYPE html>
+...full file content...
+</file>
+
+Output ONLY the file tag and its contents. No explanation, no markdown fences, nothing else.`;
+
+export const CACHED_LIVE_PREVIEW_SYSTEM = [
+  {
+    type: "text" as const,
+    text: LIVE_PREVIEW_SYSTEM_PROMPT,
+    cache_control: { type: "ephemeral" as const },
+  },
+];
+
+export const CACHED_LIVE_PREVIEW_EDITOR_SYSTEM = [
+  {
+    type: "text" as const,
+    text: LIVE_PREVIEW_EDITOR_SYSTEM_PROMPT,
+    cache_control: { type: "ephemeral" as const },
+  },
+];
