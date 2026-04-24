@@ -267,9 +267,7 @@ export default function ProjectPage() {
         if (LIVE_PREVIEW_MODE) {
           // ── live preview events ──────────────────────────────────────────
           if (data.log) setLogs((prev) => [...prev, data.log as string]);
-          if (data.htmlChunk) {
-            updatePreview(data.htmlChunk as string);
-          }
+          // htmlChunk ignored during streaming — show result only when done
           if (data.done && data.html) {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             es.close();
@@ -733,17 +731,29 @@ export default function ProjectPage() {
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-3 py-4 space-y-3">
-              {/* Empty state (live mode, no messages yet) */}
+              {/* Generation progress (live mode, streaming) */}
               {LIVE_PREVIEW_MODE && chatMessages.length === 0 && status === "streaming" && (
-                <div className="flex flex-col items-center gap-3 pt-4">
-                  <div className="w-8 h-8 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center">
-                    <svg className="w-4 h-4 text-[#38BDF8] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                  </div>
-                  <p className="text-xs text-[#2a2a2a] text-center">
-                    {logs[logs.length - 1] ?? "Generating your app..."}
-                  </p>
+                <div className="flex flex-col gap-2 pt-2">
+                  {(logs.length === 0 ? ["Generating your app..."] : logs).map((log, i) => (
+                    <div key={i} className="flex justify-start">
+                      <div className="w-5 h-5 rounded-md bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center flex-shrink-0 mt-0.5 mr-2">
+                        {i === logs.length - 1 ? (
+                          <svg className="w-3 h-3 text-[#38BDF8] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                        ) : (
+                          <svg className="w-3 h-3 text-[#38BDF8]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className={`max-w-[85%] rounded-xl rounded-tl-sm px-3 py-2 text-xs leading-relaxed bg-[#0d0d0d] border border-[#1a1a1a] ${
+                        i === logs.length - 1 ? "text-[#888]" : "text-[#333]"
+                      }`}>
+                        {log}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
