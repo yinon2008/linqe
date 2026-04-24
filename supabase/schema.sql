@@ -93,3 +93,14 @@ create policy "Service role full access to tasks" on tasks
 alter table projects add column if not exists is_public       boolean not null default false;
 alter table projects add column if not exists budget_usd      numeric;
 alter table projects add column if not exists design_settings jsonb;
+
+-- Catalog / publishing columns
+alter table projects add column if not exists category        text    default 'Other';
+alter table projects add column if not exists published_at    timestamptz;
+alter table projects add column if not exists views           integer not null default 0;
+alter table projects add column if not exists remixes         integer not null default 0;
+alter table projects add column if not exists author_name     text    default '';
+
+-- Index for fast catalog queries
+create index if not exists projects_catalog_idx on projects(is_public, published_at desc)
+  where is_public = true;

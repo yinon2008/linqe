@@ -24,6 +24,8 @@ const EXAMPLE_PROMPTS = [
   "Make a pomodoro timer with sound",
 ];
 
+const PUBLISH_CATEGORIES = ["Web App", "Landing Page", "Dashboard", "E-commerce", "Portfolio", "Tool", "Game", "Other"];
+
 // ── HTML preview generator (legacy / non-live mode) ───────────────────────────
 function generateProjectHtml(plan: ProjectPlan, accent: string): string {
   const initial = plan.project_title.trim().charAt(0).toUpperCase();
@@ -178,6 +180,14 @@ export default function ProjectPage() {
   const [newTaskType, setNewTaskType]   = useState<AutomationType>("none");
   const [newTaskCost, setNewTaskCost]   = useState("0");
   const [selectedDeliverable, setSelectedDeliverable] = useState<string | null>(null);
+
+  // Publish modal
+  const [publishOpen, setPublishOpen]           = useState(false);
+  const [publishTitle, setPublishTitle]         = useState("");
+  const [publishDesc, setPublishDesc]           = useState("");
+  const [publishCategory, setPublishCategory]   = useState("Other");
+  const [publishLoading, setPublishLoading]     = useState(false);
+  const [publishDone, setPublishDone]           = useState(false);
 
   // Live preview state
   const [generatedHtml, setGeneratedHtml] = useState<string>("");
@@ -336,6 +346,34 @@ export default function ProjectPage() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
+
+  // ── Publish ───────────────────────────────────────────────────────────────
+  async function handlePublish() {
+    setPublishLoading(true);
+    try {
+      await fetch(`/api/projects/${id}/publish`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: publishTitle,
+          description: publishDesc,
+          category: publishCategory,
+        }),
+      });
+      setPublishDone(true);
+    } catch {
+      // silent — user can retry
+    } finally {
+      setPublishLoading(false);
+    }
+  }
+
+  function openPublishModal() {
+    setPublishTitle(LIVE_PREVIEW_MODE ? (plan?.project_title ?? "My App") : (plan?.project_title ?? "My App"));
+    setPublishDesc(plan?.project_description ?? "");
+    setPublishDone(false);
+    setPublishOpen(true);
+  }
 
   // ── sendChat ──────────────────────────────────────────────────────────────
   const sendChat = useCallback(async (overrideMsg?: string) => {
@@ -615,6 +653,19 @@ export default function ProjectPage() {
                 />
               </div>
             </>
+          )}
+
+          {/* Publish */}
+          {(iframeHtml || generatedHtml || plan) && (
+            <button
+              onClick={openPublishModal}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] hover:bg-[#38BDF8]/20 transition-all"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Publish
+            </button>
           )}
 
           {/* Open in new tab */}
@@ -1168,6 +1219,136 @@ export default function ProjectPage() {
           )}
         </div>
       </div>
+
+      {/* ── Publish Modal ────────────────────────────────────────────────── */}
+      {publishOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
+          onClick={(e) => { if (e.target === e.currentTarget) setPublishOpen(false); }}
+        >
+          <div className="bg-[#0a0a0a] border border-[#1e1e1e] rounded-2xl w-full max-w-md mx-4 overflow-hidden">
+            {publishDone ? (
+              /* Success state */
+              <div className="p-8 flex flex-col items-center text-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-[#34D399]/10 border border-[#34D399]/20 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-[#34D399]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-white font-semibold mb-1">Published to the catalog!</p>
+                  <p className="text-[#444] text-xs">Your app is now visible to everyone in the Linqe community.</p>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <a
+                    href="/examples"
+                    target="_blank"
+                    className="px-4 py-2 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] text-xs font-medium hover:bg-[#38BDF8]/20 transition-all"
+                  >
+                    View in catalog →
+                  </a>
+                  <button
+                    onClick={() => setPublishOpen(false)}
+                    className="px-4 py-2 rounded-xl bg-[#1a1a1a] text-[#555] text-xs hover:text-white transition-all"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Publish form */
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h2 className="text-white font-semibold text-sm">Publish to Catalog</h2>
+                    <p className="text-[#444] text-xs mt-0.5">Share your app with the Linqe community</p>
+                  </div>
+                  <button onClick={() => setPublishOpen(false)} className="text-[#333] hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {/* Title */}
+                  <div>
+                    <label className="block text-[11px] text-[#555] mb-1.5 uppercase tracking-wide">App name</label>
+                    <input
+                      value={publishTitle}
+                      onChange={(e) => setPublishTitle(e.target.value)}
+                      placeholder="My awesome app"
+                      className="w-full bg-[#0d0d0d] border border-[#1e1e1e] rounded-xl px-3 py-2 text-white text-sm placeholder-[#333] focus:outline-none focus:border-[#38BDF8]/30 transition-colors"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-[11px] text-[#555] mb-1.5 uppercase tracking-wide">Description</label>
+                    <textarea
+                      value={publishDesc}
+                      onChange={(e) => setPublishDesc(e.target.value)}
+                      placeholder="What does this app do?"
+                      rows={2}
+                      className="w-full bg-[#0d0d0d] border border-[#1e1e1e] rounded-xl px-3 py-2 text-white text-sm placeholder-[#333] focus:outline-none focus:border-[#38BDF8]/30 transition-colors resize-none"
+                    />
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className="block text-[11px] text-[#555] mb-1.5 uppercase tracking-wide">Category</label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {PUBLISH_CATEGORIES.map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setPublishCategory(cat)}
+                          className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                            publishCategory === cat
+                              ? "bg-[#38BDF8]/15 border border-[#38BDF8]/30 text-[#38BDF8]"
+                              : "bg-[#0d0d0d] border border-[#1a1a1a] text-[#444] hover:text-[#666]"
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Deploy checklist */}
+                  <div className="bg-[#080808] border border-[#141414] rounded-xl p-3">
+                    <p className="text-[11px] text-[#444] mb-2.5 uppercase tracking-wide">After publishing</p>
+                    <div className="space-y-2">
+                      {[
+                        { icon: "🌐", label: "Add a custom domain", hint: "Namecheap, GoDaddy, Google Domains" },
+                        { icon: "🚀", label: "Deploy to the web", hint: "Netlify Drop, GitHub Pages, Vercel" },
+                        { icon: "📊", label: "Add analytics", hint: "Google Analytics, Plausible" },
+                        { icon: "📧", label: "Set up email capture", hint: "Mailchimp, ConvertKit, Resend" },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-start gap-2.5">
+                          <span className="text-sm mt-0.5">{item.icon}</span>
+                          <div>
+                            <p className="text-xs text-[#555]">{item.label}</p>
+                            <p className="text-[10px] text-[#333]">{item.hint}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <button
+                    onClick={handlePublish}
+                    disabled={!publishTitle.trim() || publishLoading}
+                    className="w-full py-2.5 rounded-xl bg-[#38BDF8] text-black text-sm font-semibold hover:bg-[#7DD3FC] disabled:opacity-40 transition-all"
+                  >
+                    {publishLoading ? "Publishing…" : "Publish to catalog →"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
