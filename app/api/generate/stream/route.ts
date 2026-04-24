@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
 
           const stream = anthropic.messages.stream({
             model: "claude-opus-4-6",
-            max_tokens: 8192,
+            max_tokens: 16000,
             system: CACHED_LIVE_PREVIEW_SYSTEM,
             messages: [{ role: "user", content: project.raw_prompt }],
           });
