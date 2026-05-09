@@ -581,20 +581,20 @@ export default function ProjectPage() {
 
       {/* ── Top bar ─────────────────────────────────────────────────────── */}
       <div
-        className="flex items-center justify-between px-4 flex-shrink-0 border-b border-[#141414]"
-        style={{ height: "48px", background: "#0a0a0a" }}
+        className="flex items-center justify-between px-4 flex-shrink-0 border-b border-[#161616]"
+        style={{ height: "48px", background: "#0b0b0b" }}
       >
         {/* Left */}
         <div className="flex items-center gap-2 min-w-0">
           <button
             onClick={() => router.push("/dashboard")}
-            className="text-[#2a2a2a] hover:text-white transition-colors"
+            className="text-[#444] hover:text-white transition-colors p-0.5 rounded"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-[#1e1e1e] text-sm">/</span>
+          <span className="text-[#333] text-sm">/</span>
           <span className="text-sm font-medium text-white truncate max-w-[220px]">
             {LIVE_PREVIEW_MODE ? "Live Preview" : (plan?.project_title ?? "Building…")}
           </span>
@@ -602,21 +602,21 @@ export default function ProjectPage() {
         </div>
 
         {/* Center tabs */}
-        <div className="flex items-center gap-0.5 bg-[#0d0d0d] border border-[#1a1a1a] rounded-lg p-0.5">
+        <div className="flex items-center gap-0.5 bg-[#0d0d0d] border border-[#1e1e1e] rounded-lg p-0.5">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? "bg-[#1a1a1a] text-white shadow-sm"
-                  : "text-[#333] hover:text-[#666]"
+                  ? "bg-[#1e1e1e] text-white shadow-sm"
+                  : "text-[#555] hover:text-[#999]"
               }`}
             >
               {tab.icon}
               {tab.label}
               {tab.id === "tasks" && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#1e1e1e] text-[#444] tabular-nums">
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-[#1a1a1a] text-[#555] tabular-nums">
                   {allTasks.length}
                 </span>
               )}
@@ -630,7 +630,7 @@ export default function ProjectPage() {
           {LIVE_PREVIEW_MODE && htmlVersions.length > 1 && (
             <button
               onClick={undoHtml}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#333] border border-[#1a1a1a] hover:border-[#2a2a2a] hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#555] border border-[#1e1e1e] hover:border-[#333] hover:text-white transition-all"
               title="Undo last change"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -643,10 +643,10 @@ export default function ProjectPage() {
           {/* Progress (non-live) */}
           {!LIVE_PREVIEW_MODE && (
             <>
-              <span className="text-[11px] text-[#2a2a2a] tabular-nums hidden md:inline">
+              <span className="text-[11px] text-[#555] tabular-nums hidden md:inline">
                 {completedTasks}/{allTasks.length} done
               </span>
-              <div className="w-16 h-0.5 bg-[#111] rounded-full overflow-hidden hidden md:block">
+              <div className="w-16 h-0.5 bg-[#1a1a1a] rounded-full overflow-hidden hidden md:block">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{ width: `${allTasks.length > 0 ? (completedTasks / allTasks.length) * 100 : 0}%`, background: accentColor }}
@@ -659,7 +659,7 @@ export default function ProjectPage() {
           {(iframeHtml || generatedHtml || plan) && (
             <button
               onClick={openPublishModal}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] hover:bg-[#38BDF8]/20 transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[#38BDF8]/10 border border-[#38BDF8]/25 text-[#38BDF8] hover:bg-[#38BDF8]/20 transition-all"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -677,7 +677,7 @@ export default function ProjectPage() {
                 win?.document.write(html);
                 win?.document.close();
               }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#333] border border-[#1a1a1a] hover:border-[#2a2a2a] hover:text-white transition-all"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#555] border border-[#1e1e1e] hover:border-[#333] hover:text-white transition-all"
               title="Open preview in new tab"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -692,7 +692,7 @@ export default function ProjectPage() {
             <>
               <button
                 onClick={copyCode}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#333] border border-[#1a1a1a] hover:border-[#2a2a2a] hover:text-white transition-all"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#555] border border-[#1e1e1e] hover:border-[#333] hover:text-white transition-all"
               >
                 {codeCopied ? (
                   <svg className="w-3 h-3 text-[#34D399]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -707,7 +707,7 @@ export default function ProjectPage() {
               </button>
               <button
                 onClick={downloadCode}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#333] border border-[#1a1a1a] hover:border-[#2a2a2a] hover:text-white transition-all"
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[#555] border border-[#1e1e1e] hover:border-[#333] hover:text-white transition-all"
               >
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -723,8 +723,8 @@ export default function ProjectPage() {
               onClick={() => setEditMode((v) => !v)}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border transition-all ${
                 editMode
-                  ? "bg-[#1a1a1a] text-white border-[#2a2a2a]"
-                  : "text-[#333] border-[#1a1a1a] hover:border-[#2a2a2a] hover:text-white"
+                  ? "bg-[#1e1e1e] text-white border-[#2e2e2e]"
+                  : "text-[#555] border-[#1e1e1e] hover:border-[#333] hover:text-white"
               }`}
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -747,7 +747,7 @@ export default function ProjectPage() {
           >
             <button
               onClick={() => setChatCollapsed(false)}
-              className="text-[#222] hover:text-white transition-colors p-1"
+              className="text-[#444] hover:text-white transition-colors p-1"
               title="Open chat"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -761,9 +761,9 @@ export default function ProjectPage() {
             style={{ width: `${chatWidth}px`, background: "#090909" }}
           >
             {/* Chat header */}
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#111] flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#141414] flex-shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center">
+                <div className="w-5 h-5 rounded-md bg-[#38BDF8]/10 border border-[#38BDF8]/25 flex items-center justify-center">
                   <svg className="w-3 h-3 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
@@ -772,7 +772,7 @@ export default function ProjectPage() {
               </div>
               <button
                 onClick={() => setChatCollapsed(true)}
-                className="text-[#1e1e1e] hover:text-[#555] transition-colors"
+                className="text-[#444] hover:text-[#888] transition-colors"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -810,7 +810,7 @@ export default function ProjectPage() {
 
               {chatMessages.length === 0 && status === "done" && LIVE_PREVIEW_MODE && (
                 <div className="flex flex-col items-center gap-3 pt-4 pb-2">
-                  <p className="text-[11px] text-[#333] text-center px-2">
+                  <p className="text-[11px] text-[#555] text-center px-2">
                     Try asking me to modify the app:
                   </p>
                   <div className="flex flex-col gap-1.5 w-full">
@@ -818,7 +818,7 @@ export default function ProjectPage() {
                       <button
                         key={p}
                         onClick={() => sendChat(p)}
-                        className="w-full text-left text-[11px] text-[#444] bg-[#0d0d0d] border border-[#1a1a1a] rounded-lg px-3 py-2 hover:border-[#2a2a2a] hover:text-white transition-all"
+                        className="w-full text-left text-[11px] text-[#666] bg-[#0d0d0d] border border-[#1e1e1e] rounded-lg px-3 py-2 hover:border-[#2e2e2e] hover:text-white transition-all"
                       >
                         {p}
                       </button>
@@ -874,8 +874,8 @@ export default function ProjectPage() {
             </div>
 
             {/* Input */}
-            <div className="border-t border-[#111] p-3 flex-shrink-0">
-              <div className="bg-[#0d0d0d] border border-[#1a1a1a] rounded-xl p-2.5 focus-within:border-[#38BDF8]/25 transition-colors">
+            <div className="border-t border-[#141414] p-3 flex-shrink-0">
+              <div className="bg-[#0d0d0d] border border-[#1e1e1e] rounded-xl p-2.5 focus-within:border-[#38BDF8]/30 transition-colors">
                 <textarea
                   ref={chatInputRef}
                   value={chatInput}
@@ -887,16 +887,16 @@ export default function ProjectPage() {
                       e.preventDefault(); sendChat();
                     }
                   }}
-                  placeholder={LIVE_PREVIEW_MODE ? "Ask me to change anything..." : "Ask me to change anything..."}
+                  placeholder="Ask me to change anything..."
                   rows={2}
-                  className="w-full bg-transparent text-white text-xs resize-none focus:outline-none placeholder-[#2a2a2a] leading-relaxed"
+                  className="w-full bg-transparent text-white text-xs resize-none focus:outline-none placeholder-[#3a3a3a] leading-relaxed"
                 />
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-[10px] text-[#1e1e1e]">⌘↵ to send · ⌘K to focus</span>
+                  <span className="text-[10px] text-[#444]">⌘↵ to send · ⌘K to focus</span>
                   <button
                     onClick={() => sendChat()}
                     disabled={!chatInput.trim() || chatLoading}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] hover:bg-[#38BDF8]/20 disabled:opacity-30 transition-all"
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-[#38BDF8]/10 border border-[#38BDF8]/25 text-[#38BDF8] hover:bg-[#38BDF8]/20 disabled:opacity-30 transition-all"
                   >
                     {chatLoading ? <Spinner size="sm" /> : (
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -1053,21 +1053,21 @@ export default function ProjectPage() {
                 className="border-r border-[#141414] flex flex-col flex-shrink-0 overflow-hidden"
                 style={{ width: "200px", background: "#090909" }}
               >
-                <div className="px-3 py-2.5 border-b border-[#111]">
-                  <span className="text-[10px] font-semibold text-[#222] uppercase tracking-widest">Sections</span>
+                <div className="px-3 py-2.5 border-b border-[#141414]">
+                  <span className="text-[10px] font-semibold text-[#444] uppercase tracking-widest">Sections</span>
                 </div>
                 <div className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
                   <button
                     onClick={() => setSelectedDeliverable(null)}
                     className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
-                      !selectedDeliverable ? "bg-[#1a1a1a] text-white" : "text-[#333] hover:text-[#666] hover:bg-[#0d0d0d]"
+                      !selectedDeliverable ? "bg-[#1a1a1a] text-white" : "text-[#555] hover:text-[#888] hover:bg-[#0d0d0d]"
                     }`}
                   >
                     <svg className="w-3 h-3 flex-shrink-0 text-[#444]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                     </svg>
                     <span className="text-[11px] font-medium flex-1">All tasks</span>
-                    <span className="text-[10px] text-[#2a2a2a] tabular-nums">{allTasks.length}</span>
+                    <span className="text-[10px] text-[#555] tabular-nums">{allTasks.length}</span>
                   </button>
 
                   <div className="h-px bg-[#0f0f0f] mx-1 my-1" />
@@ -1080,7 +1080,7 @@ export default function ProjectPage() {
                         key={d.id}
                         onClick={() => setSelectedDeliverable(d.id)}
                         className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-all ${
-                          selectedDeliverable === d.id ? "bg-[#1a1a1a] text-white" : "text-[#333] hover:text-[#666] hover:bg-[#0d0d0d]"
+                          selectedDeliverable === d.id ? "bg-[#1a1a1a] text-white" : "text-[#555] hover:text-[#888] hover:bg-[#0d0d0d]"
                         }`}
                       >
                         <div
@@ -1092,7 +1092,7 @@ export default function ProjectPage() {
                           </div>
                         </div>
                         <span className="text-[11px] truncate flex-1">{d.title}</span>
-                        <span className="text-[10px] text-[#2a2a2a] tabular-nums flex-shrink-0">
+                        <span className="text-[10px] text-[#555] tabular-nums flex-shrink-0">
                           {done > 0 ? `${done}/` : ""}{d.tasks.length}
                         </span>
                       </button>
@@ -1103,15 +1103,15 @@ export default function ProjectPage() {
                 {/* Cost footer */}
                 {plan && (
                   <div className="border-t border-[#111] p-3 flex-shrink-0">
-                    <p className="text-[10px] text-[#222] uppercase tracking-widest mb-1.5">Est. cost</p>
+                    <p className="text-[10px] text-[#444] uppercase tracking-widest mb-1.5">Est. cost</p>
                     <div className="flex items-baseline gap-1">
                       <span className="text-white font-semibold text-base tabular-nums">
                         ${plan.cost_breakdown.total_monthly_usd.toFixed(0)}
                       </span>
-                      <span className="text-[#2a2a2a] text-[11px]">/mo</span>
+                      <span className="text-[#555] text-[11px]">/mo</span>
                     </div>
                     {plan.cost_breakdown.total_one_time_usd > 0 && (
-                      <p className="text-[#2a2a2a] text-[10px] mt-0.5">
+                      <p className="text-[#555] text-[10px] mt-0.5">
                         + ${plan.cost_breakdown.total_one_time_usd.toFixed(0)} once
                       </p>
                     )}
@@ -1130,7 +1130,7 @@ export default function ProjectPage() {
                         {!selectedDeliverable && (
                           <div className="flex items-center gap-2 mb-3">
                             <div className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
-                            <p className="text-[10px] text-[#2a2a2a] uppercase tracking-widest font-semibold">{deliverable.title}</p>
+                            <p className="text-[10px] text-[#444] uppercase tracking-widest font-semibold">{deliverable.title}</p>
                             <div className="flex-1 h-px bg-[#0d0d0d]" />
                           </div>
                         )}
@@ -1199,7 +1199,7 @@ export default function ProjectPage() {
                             </div>
                           ) : (
                             <button onClick={() => setShowAddTask(deliverable.id)}
-                              className="mt-3 flex items-center gap-1.5 text-[10px] text-[#1e1e1e] hover:text-[#444] transition-colors">
+                              className="mt-3 flex items-center gap-1.5 text-[10px] text-[#444] hover:text-[#888] transition-colors">
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                               </svg>

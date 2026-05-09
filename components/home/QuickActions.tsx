@@ -20,7 +20,7 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
           key={action.label}
           type="button"
           onClick={() => onSelect(action.prompt)}
-          className="px-3.5 py-1.5 bg-[#0d0d0d] text-[#555] text-xs rounded-full border border-[#1a1a1a] hover:border-[#38BDF8]/35 hover:text-[#ccc] active:scale-95 transition-all duration-200 whitespace-nowrap animate-slideUp"
+          className="px-3.5 py-1.5 bg-[#0d0d0d] text-[#666] text-xs rounded-full border border-[#222] hover:border-[#38BDF8]/40 hover:text-[#ddd] hover:bg-[#111] active:scale-95 transition-all duration-200 whitespace-nowrap animate-slideUp"
           style={{ animationDelay: `${300 + i * 60}ms` }}
         >
           {action.label}

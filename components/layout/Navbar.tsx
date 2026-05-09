@@ -58,11 +58,11 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-black/70 backdrop-blur-xl">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 h-[61px] border-b border-white/[0.05] bg-black/80 backdrop-blur-xl">
         {/* Logo */}
         <Link
           href="/"
-          className="text-white font-bold text-xl tracking-tight inline-flex items-center gap-0.5 select-none"
+          className="text-white font-bold text-xl tracking-tight inline-flex items-center gap-0.5 select-none hover:opacity-80 transition-opacity"
         >
           Linqe
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{ marginBottom: 8 }}>
@@ -71,7 +71,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-7 text-sm text-[#555]">
+        <div className="hidden md:flex items-center gap-7 text-sm text-[#666]">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -84,18 +84,19 @@ export function Navbar() {
         </div>
 
         {/* Desktop auth */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           {user ? (
             <>
               <Link
-                href="/settings"
-                className="text-sm text-[#555] hover:text-white transition-colors"
+                href="/dashboard"
+                className="text-sm text-[#666] hover:text-white transition-colors px-3 py-1.5"
               >
-                Settings
+                Dashboard
               </Link>
               <Link
                 href="/dashboard"
-                className="w-8 h-8 rounded-full bg-[#111] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-semibold hover:border-[#38BDF8]/40 transition-colors"
+                className="w-8 h-8 rounded-full bg-[#141414] border border-[#2a2a2a] flex items-center justify-center text-white text-xs font-semibold hover:border-[#38BDF8]/50 hover:bg-[#1a1a1a] transition-all"
+                title={user.email ?? ""}
               >
                 {user.email?.charAt(0).toUpperCase()}
               </Link>
@@ -104,13 +105,13 @@ export function Navbar() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-[#666] hover:text-white transition-colors"
+                className="text-sm text-[#777] hover:text-white transition-colors px-3 py-1.5"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="text-sm font-medium px-4 py-1.5 rounded-full bg-[#38BDF8] text-black hover:bg-[#7DD3FC] transition-colors"
+                className="text-sm font-semibold px-4 py-1.5 rounded-full bg-[#38BDF8] text-black hover:bg-[#7DD3FC] active:scale-95 transition-all"
               >
                 Get started
               </Link>
