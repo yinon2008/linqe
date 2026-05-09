@@ -10,7 +10,11 @@ import { createClient } from "@/lib/supabase";
 
 const MAX_CHARS = 2000;
 
-export function HeroInput() {
+interface HeroInputProps {
+  exampleValue?: string;
+}
+
+export function HeroInput({ exampleValue }: HeroInputProps) {
   const [prompt, setPrompt] = useState("");
   const [model, setModel] = useState("claude-opus-4-6");
   const [loading, setLoading] = useState(false);
@@ -30,6 +34,19 @@ export function HeroInput() {
       }
     }
   }, [searchParams]);
+
+  // Apply example value from parent when it changes
+  useEffect(() => {
+    if (exampleValue) {
+      setPrompt(exampleValue);
+      setTimeout(() => {
+        if (textareaRef.current) {
+          autoResize(textareaRef.current);
+          textareaRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [exampleValue]);
 
   // Auto-resize textarea
   function autoResize(el: HTMLTextAreaElement) {
