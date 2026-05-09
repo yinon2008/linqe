@@ -91,6 +91,16 @@ body {
   50%       { box-shadow: 0 0 0 1px rgba(56,189,248,0.5), 0 0 28px rgba(56,189,248,0.18); }
 }
 
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+
 @keyframes check-draw {
   from { stroke-dashoffset: 40; }
   to   { stroke-dashoffset: 0; }
@@ -105,6 +115,8 @@ body {
 .animate-scaleIn        { animation: scaleIn 0.3s ease-out both; }
 .animate-bounceIn       { animation: bounceIn 0.5s ease-out both; }
 .animate-shake          { animation: shake 0.4s ease-out; }
+.animate-spin-slow      { animation: spin-slow 2.5s linear infinite; }
+.animate-float          { animation: float 3s ease-in-out infinite; }
 
 /* skeleton shimmer */
 .skeleton-shimmer {
@@ -148,7 +160,19 @@ body {
 }
 
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #333; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.5);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(56, 189, 248, 0.2);
+  color: #fff;
+}

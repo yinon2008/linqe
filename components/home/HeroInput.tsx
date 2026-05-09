@@ -10,7 +10,11 @@ import { createClient } from "@/lib/supabase";
 
 const MAX_CHARS = 2000;
 
-export function HeroInput() {
+interface HeroInputProps {
+  exampleValue?: string;
+}
+
+export function HeroInput({ exampleValue }: HeroInputProps) {
   const [prompt, setPrompt] = useState("");
   const [model, setModel] = useState("claude-opus-4-6");
   const [loading, setLoading] = useState(false);
@@ -30,6 +34,19 @@ export function HeroInput() {
       }
     }
   }, [searchParams]);
+
+  // Apply example value from parent when it changes
+  useEffect(() => {
+    if (exampleValue) {
+      setPrompt(exampleValue);
+      setTimeout(() => {
+        if (textareaRef.current) {
+          autoResize(textareaRef.current);
+          textareaRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [exampleValue]);
 
   // Auto-resize textarea
   function autoResize(el: HTMLTextAreaElement) {
@@ -93,10 +110,10 @@ export function HeroInput() {
         <div
           className={`bg-[#0d0d0d] rounded-2xl px-4 py-3 border transition-all duration-200 ${
             focused
-              ? "border-[#38BDF8]/40 shadow-[0_0_0_1px_rgba(56,189,248,0.12),0_0_32px_rgba(56,189,248,0.07)]"
+              ? "border-[#38BDF8]/40 shadow-[0_0_0_1px_rgba(56,189,248,0.1),0_0_40px_rgba(56,189,248,0.08)]"
               : isOverLimit
               ? "border-red-500/40"
-              : "border-[#1e1e1e] hover:border-[#2a2a2a]"
+              : "border-[#222] hover:border-[#333]"
           }`}
         >
           <div className="flex items-center gap-3">
@@ -122,7 +139,7 @@ export function HeroInput() {
               placeholder="Describe what you want to build..."
               rows={1}
               maxLength={MAX_CHARS + 100}
-              className="flex-1 bg-transparent text-white placeholder-[#333] text-sm resize-none outline-none leading-6 py-0.5 max-h-40"
+              className="flex-1 bg-transparent text-white placeholder-[#444] text-sm resize-none outline-none leading-6 py-0.5 max-h-40"
               style={{ overflow: "hidden" }}
             />
 
@@ -145,12 +162,12 @@ export function HeroInput() {
 
           {/* Footer row */}
           {(showCounter || focused) && (
-            <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#111]">
-              <p className="text-[10px] text-[#333]">
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#1a1a1a]">
+              <p className="text-[10px] text-[#555]">
                 Enter to generate&nbsp;&nbsp;·&nbsp;&nbsp;Shift+Enter for newline
               </p>
               <span className={`text-[10px] font-mono tabular-nums transition-colors ${
-                isOverLimit ? "text-red-400" : isNearLimit ? "text-yellow-500/70" : "text-[#2a2a2a]"
+                isOverLimit ? "text-red-400" : isNearLimit ? "text-yellow-500/70" : "text-[#444]"
               }`}>
                 {charCount}/{MAX_CHARS}
               </span>
